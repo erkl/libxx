@@ -33,9 +33,16 @@ else
 		build/src/chacha.o
 endif
 
+TEST_OBJS := \
+	build/test/test-chacha20.o \
+	build/test/main.o
+
 
 build: build/libxx.a
 	@:
+
+test: build/libxx.a build/libxx-test
+	@./build/libxx-test
 
 install: build/libxx.a
 	@cp -R include /usr/local/include/xx
@@ -44,7 +51,7 @@ install: build/libxx.a
 clean:
 	@rm -rf build/*
 
-.PHONY: build install clean
+.PHONY: build test install clean
 
 
 # If the Makefile changes, reset everything.
@@ -57,6 +64,10 @@ build/make-tag: Makefile
 build/libxx.a: build/make-tag $(LIB_OBJS)
 	@$(AR) $(ARFLAGS) $@ $(LIB_OBJS)
 
+build/libxx-test: build/make-tag build/libxx.a $(TEST_OBJS)
+	@mkdir -p $(shell dirname $@)
+	@$(LD) $(LDFLAGS) -o $@ build/libxx.a $(TEST_OBJS)
+
 build/src/x86-64/%.o: src/x86-64/%.asm
 	@mkdir -p $(shell dirname $@)
 	@$(AS) $(ASFLAGS) -MD $(@:.o=.d) -I. -o $@ $<
@@ -67,3 +78,4 @@ build/%.o: %.c
 
 
 -include $(LIB_OBJS:%.o=%.d)
+-include $(TEST_OBJS:%.o=%.d)
