@@ -92,8 +92,8 @@ xx_chacha20_xor:
 
     ; Simple path: we're currently aligned to a block boundary, which means
     ; we can simply forward our arguments to the core ChaCha function. Because
-    ; we haven't modified the stack, we can issue a jmp rather than a call
-    ; instruction and let the core function return on our behalf.
+    ; we haven't modified the stack, we can use a jmp rather than a call and
+    ; let the core function return on our behalf.
 
 .j:
     mov     rdx, rcx
@@ -301,8 +301,8 @@ xx_chacha20_xor:
     jmp     .i
 
 
-; This function detects which instruction set extensions are supported by
-; the CPU and returns the best available core function.
+; This function returns the best available core function given the instruction
+; set extensions supported by the CPU.
 
 xx__select_chacha:
     call    xx__cpuid
@@ -335,10 +335,12 @@ xx__select_chacha:
     lea     rax, [rel xx__chacha_x64]
     ret
 
-    ; Early Intel 64 processors, much like AMD ones, suffer from pretty awful
-    ; SIMD performance. The Intel Core architecture halved the cycle count for
-    ; most SSE instructions (and also introduced the SSSE3). This is why we use
-    ; the non-vectorized implementation on non-SSSE3 Intel CPUs.
+    ; Early Intel 64 processors, much like their AMD counterparts, suffer from
+    ; pretty awful SIMD performance.
+    ;
+    ; The Intel Core family halved the cycle improved things significantly.
+    ; It also introduced the SSSE3 extension, which is why we use the non-
+    ; vectorized implementation on non-SSSE3 Intel CPUs.
 
 .d:
     test    eax, HAVE_AVX2
@@ -363,7 +365,7 @@ xx__select_chacha:
     ret
 
 
-; Points to the selected core function.
+; This pointer stores the selected core function.
 
     section .data align=16
 

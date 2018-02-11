@@ -9,7 +9,7 @@
 
 
 ; This function collects processor feature information using the cpuid
-; instruction. The findings are returned as an integer bitfield.
+; instruction. The findings are condensed to a series of bit flags.
 
 xx__cpuid:
     xor     edi, edi
