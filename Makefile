@@ -41,7 +41,7 @@ TEST_OBJS := \
 build: build/libxx.a
 	@:
 
-test: build/libxx.a build/libxx-test
+test: build/libxx-test
 	@./build/libxx-test
 
 install: build/libxx.a
@@ -57,7 +57,7 @@ clean:
 # If the Makefile changes, reset everything.
 build/make-tag: Makefile
 	@mkdir -p $(shell dirname $@)
-	@$(MAKE) clean
+	@rm -rf build/*
 	@touch $@
 
 
@@ -66,7 +66,7 @@ build/libxx.a: build/make-tag $(LIB_OBJS)
 
 build/libxx-test: build/make-tag build/libxx.a $(TEST_OBJS)
 	@mkdir -p $(shell dirname $@)
-	@$(LD) $(LDFLAGS) -o $@ build/libxx.a $(TEST_OBJS)
+	@$(LD) $(LDFLAGS) -o $@ $(TEST_OBJS) build/libxx.a
 
 build/src/x86-64/%.o: src/x86-64/%.s
 	@mkdir -p $(shell dirname $@)
