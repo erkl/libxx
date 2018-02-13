@@ -68,7 +68,7 @@ build/libxx-test: build/make-tag build/libxx.a $(TEST_OBJS)
 	@mkdir -p $(shell dirname $@)
 	@$(LD) $(LDFLAGS) -o $@ build/libxx.a $(TEST_OBJS)
 
-build/src/x86-64/%.o: src/x86-64/%.asm
+build/src/x86-64/%.o: src/x86-64/%.s
 	@mkdir -p $(shell dirname $@)
 	@$(AS) $(ASFLAGS) -MD $(@:.o=.d) -I. -o $@ $<
 
