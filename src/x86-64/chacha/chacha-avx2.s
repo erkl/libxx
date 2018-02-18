@@ -5,12 +5,8 @@
     global  xx__chacha_avx2
 
 
-; An optimized implementation of our ChaCha core function, utilizing the AVX2
+; An optimized implementation of our core ChaCha function, targeting the AVX2
 ; instruction set extension.
-;
-; Since all our SIMD-based implementations follow the same general structure,
-; I've eschewed code-level documentation in these files (no one likes repeating
-; themselves). Instead, see this directory's README.
 
 xx__chacha_avx2:
     push    rbx
@@ -33,6 +29,8 @@ xx__chacha_avx2:
     jbe     .s
     cmp     rbx, 4
     jbe     .m
+
+    ; One or more batches of 5 to 8 blocks each.
 
 .l:
     vpbroadcastd    ymm0, [r8]
@@ -70,6 +68,8 @@ xx__chacha_avx2:
     mov     r10, [r8 + 48]
     jmp     .li
 
+    ; Outer loop jump target.
+
 .ll:
     vpbroadcastd    ymm0, [r8]
     vpbroadcastd    ymm1, [r8 + 4]
@@ -88,6 +88,8 @@ xx__chacha_avx2:
     vpbroadcastd    ymm14, [r8 + 56]
     vpbroadcastd    ymm15, [r8 + 60]
 
+    ; Bump the block counter.
+
 .li:
     mov     rax, 8
     cmp     rax, rbx
@@ -96,6 +98,8 @@ xx__chacha_avx2:
     mov     r11, r10
     add     r10, rax
     mov     [r8 + 48], r10
+
+    ; Propagate block counter carries.
 
     cmp     r10d, eax
     jae     .la
@@ -108,6 +112,8 @@ xx__chacha_avx2:
     vpaddd      ymm12, ymm12, [rel k01234567]
     vmovdqa     [rsp + 448], ymm12
     vmovdqa     [rsp + 480], ymm13
+
+    ; Double-round loop.
 
     mov     rax, r9
 
@@ -254,6 +260,8 @@ xx__chacha_avx2:
 
     jmp     .lr
 
+    ; Finish and transpose this batch.
+
 .lb:
     vmovdqa     [rsp], ymm14
     vmovdqa     [rsp + 32], ymm15
@@ -313,6 +321,8 @@ xx__chacha_avx2:
     vpunpckhqdq     ymm15, ymm13, ymm7
     vpunpcklqdq     ymm13, ymm13, ymm7
 
+    ; Skip branch conditions that only apply to the final batch.
+
     cmp     rbx, 8
     jbe     .lf
 
@@ -326,6 +336,8 @@ xx__chacha_avx2:
     test    rsi, rsi
     jnz     .lx
     jmp     .lm
+
+    ; Spill the last block to [rdx].
 
 .ls:
     cmp     rbx, 6
@@ -377,6 +389,8 @@ xx__chacha_avx2:
     test    rsi, rsi
     jnz     .lx4
     jmp     .lm4
+
+    ; Write 5 to 8 whole blocks (mov).
 
 .lm:
     cmp     rbx, 6
@@ -437,6 +451,8 @@ xx__chacha_avx2:
     cmp     rbx, 2
     ja      .m
     jmp     .s
+
+    ; Write 5 to 8 whole blocks (xor).
 
 .lx:
     cmp     rbx, 6
@@ -514,6 +530,8 @@ xx__chacha_avx2:
     cmp     rbx, 2
     ja      .m
 
+    ; One batch of 1 or 2 blocks.
+
 .s:
     vbroadcasti128    ymm10, [r8]
     vbroadcasti128    ymm11, [r8 + 16]
@@ -527,7 +545,11 @@ xx__chacha_avx2:
     vmovdqa     ymm2, ymm12
     vmovdqa     ymm3, ymm13
 
+    ; Bump the block counter.
+
     add     [r8 + 48], rbx
+
+    ; Double-round loop.
 
 .sr:
     sub     r9, 2
@@ -575,11 +597,15 @@ xx__chacha_avx2:
 
     jmp     .sr
 
+    ; Finish the batch.
+
 .sb:
     vpaddd      ymm0, ymm0, ymm10
     vpaddd      ymm1, ymm1, ymm11
     vpaddd      ymm2, ymm2, ymm12
     vpaddd      ymm3, ymm3, ymm13
+
+    ; Reuse the .m path's output code.
 
     test    rcx, rcx
     jnz     .ss
@@ -602,6 +628,8 @@ xx__chacha_avx2:
     jb      .mx1
     jmp     .mx2
 
+    ; One batch of 3 or 4 blocks.
+
 .m:
     vbroadcasti128    ymm10, [r8]
     vbroadcasti128    ymm11, [r8 + 16]
@@ -620,7 +648,11 @@ xx__chacha_avx2:
     vmovdqa     ymm6, ymm12
     vmovdqa     ymm7, ymm14
 
+    ; Bump the block counter.
+
     add     [r8 + 48], rbx
+
+    ; Double-round loop.
 
 .mr:
     sub     r9, 2
@@ -706,6 +738,8 @@ xx__chacha_avx2:
 
     jmp     .mr
 
+    ; Finish the batch.
+
 .mb:
     vpaddd      ymm0, ymm0, ymm10
     vpaddd      ymm1, ymm1, ymm11
@@ -721,6 +755,8 @@ xx__chacha_avx2:
     test    rsi, rsi
     jnz     .mx
     jmp     .mm
+
+    ; Spill the last block to [rdx].
 
 .ms:
     cmp     rbx, 4
@@ -768,6 +804,8 @@ xx__chacha_avx2:
     xor     r11, r11
     jmp     .f
 
+    ; Write 1 to 4 whole blocks (mov).
+
 .mm:
     cmp     rbx, 4
     jb      .mm3
@@ -794,6 +832,8 @@ xx__chacha_avx2:
     vmovdqu         [rdi], ymm8
 
     jmp     .f
+
+    ; Write 1 to 4 whole blocks (xor).
 
 .mx:
     cmp     rbx, 4
@@ -828,11 +868,15 @@ xx__chacha_avx2:
     vmovdqu         [rdi + 32], ymm9
     vmovdqu         [rdi], ymm8
 
+    ; Deal with partial final blocks.
+
 .f:
     test    rcx, rcx
     jz      .r
     test    rsi, rsi
     jnz     .fx
+
+    ; Write the final 1 to 63 bytes (mov).
 
 .fm:
     add     rdi, r11
@@ -884,6 +928,8 @@ xx__chacha_avx2:
     mov     al, [rdx + rbx]
     mov     [rdi + rbx], al
     jmp     .r
+
+    ; Write the final 1 to 63 bytes (xor).
 
 .fx:
     add     rdi, r11
@@ -941,6 +987,8 @@ xx__chacha_avx2:
     mov     al, [rdx + rbx]
     xor     al, [rsi + rbx]
     mov     [rdi + rbx], al
+
+    ; And we're done.
 
 .r:
     vzeroupper

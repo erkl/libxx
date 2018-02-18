@@ -59,7 +59,7 @@ xx_chacha20_seek:
     ret
 
 
-; Generate keystream data, optionally xor'd.
+; Generate and output keystream data, optionally xor'd.
 ;
 ;   rdi - struct xx_chacha20 *
 ;   rsi - uint8_t * dst
@@ -80,9 +80,7 @@ xx_chacha20_xor:
     test    rax, rax
     jz      .s
 
-    ; Load the context's offset field. A positive value indicates the number of
-    ; bytes that have already been consumed, out of the 64 bytes of keystream
-    ; data in the context's cache. A negative value signifies a pending seek.
+    ; Load and check the context's offset field.
 
 .i:
     movsx   r10, byte [r8 + 128]
@@ -90,10 +88,7 @@ xx_chacha20_xor:
     js      .n
     jnz     .c
 
-    ; Simple path: we're currently aligned to a block boundary, which means
-    ; we can simply forward our arguments to the core ChaCha function. Because
-    ; we haven't modified the stack, we can use a jmp rather than a call and
-    ; let the core function return on our behalf.
+    ; Simple path: we're already aligned to a block boundary.
 
 .j:
     mov     rdx, rcx
@@ -104,9 +99,7 @@ xx_chacha20_xor:
     mov     r9, 20
     jmp     rax
 
-    ; Complex path: it's time to concretize a previously scheduled seek (to a
-    ; keystream position which is not a multiple of 64). Fill the context's
-    ; cache with the next keystream block.
+    ; Complex path: concretize a pending seek.
 
 .n:
     push    rdi
@@ -131,8 +124,7 @@ xx_chacha20_xor:
 
     neg     r10
 
-    ; There's already some useful data in the cache: the next `64 - r10` bytes
-    ; of the keystream can be read from `[r8 + 64 + r10]` onwards.
+    ; Use cached keystream data.
 
 .c:
     mov     rdx, 64
@@ -146,7 +138,7 @@ xx_chacha20_xor:
     test    rsi, rsi
     jnz     .cx
 
-    ; Consume cached data.
+    ; Take up to 63 bytes from the cache (mov).
 
 .cm:
     bt      rdx, 5
@@ -198,7 +190,7 @@ xx_chacha20_xor:
     mov     [rdi + r11], r9b
     jmp     .e
 
-    ; Consume cached data (xor'd).
+    ; Take up to 63 bytes from the cache (xor).
 
 .cx:
     bt      rdx, 5
@@ -259,8 +251,7 @@ xx_chacha20_xor:
     xor     r9b, [rsi + r11]
     mov     [rdi + r11], r9b
 
-    ; At this point we're either done, or we've just run out of cached data.
-    ; In the latter case, use the core function to generate the rest.
+    ; Are we done or did we just run out of cached data?
 
 .d:
     add     rsi, rdx
@@ -269,9 +260,7 @@ xx_chacha20_xor:
     sub     rcx, rdx
     jnz     .j
 
-    ; Commit the new offset. We don't have the previous offset at hand, but we
-    ; can derive it from r10 (as `r10 - r8 - 64`). We can drop the 64 constant,
-    ; since we're only interested in the result modulo 64.
+    ; Commit the new byte offset and return.
 
     sub     r10, r8
     add     rdx, r10
@@ -281,8 +270,7 @@ xx_chacha20_xor:
 .q:
     ret
 
-    ; Because we don't synchronize loads from/stores to `[rel core]`, two or
-    ; more threads may end up here at the same time. This is absolutely fine.
+    ; Decide which core ChaCha function to use.
 
 .s:
     push    rdi
@@ -301,15 +289,14 @@ xx_chacha20_xor:
     jmp     .i
 
 
-; This function returns the best available core function given the instruction
-; set extensions supported by the CPU.
+; Returns the best available core function given the instruction set extensions
+; supported by the CPU.
 
 xx__select_chacha:
     call    xx__cpuid
 
     ; AMD CPUs didn't get 128-bit wide SSE units until the K10 family (which
-    ; also introduced the SSE4a extension). On older AMD hardware, our non-
-    ; vectorized implementation ends up being faster than any SIMD variant.
+    ; also introduced the SSE4a extension).
 
     test    eax, VENDOR_AMD
     jz      .d
@@ -335,12 +322,7 @@ xx__select_chacha:
     lea     rax, [rel xx__chacha_x64]
     ret
 
-    ; Early Intel 64 processors, much like their AMD counterparts, suffer from
-    ; pretty awful SIMD performance.
-    ;
-    ; The Intel Core family halved the cycle improved things significantly.
-    ; It also introduced the SSSE3 extension, which is why we use the non-
-    ; vectorized implementation on non-SSSE3 Intel CPUs.
+    ; Intel  Core family (which also introduced the SSSE3 extension).
 
 .d:
     test    eax, HAVE_AVX2
@@ -365,7 +347,7 @@ xx__select_chacha:
     ret
 
 
-; This pointer stores the selected core function.
+; Runtime-initialized core function pointer.
 
     section .data align=16
 

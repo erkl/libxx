@@ -5,19 +5,13 @@
     global  xx__chacha_x64
 
 
-; This is our "default" x86-64 ChaCha core function implementation.
-;
-; It may seem silly to go through the effort of implementing a non-SIMD variant
-; when the amd64 standard explicitly includes the SSE/SSE2 instruction sets.
-; However, SIMD operations on many older processors are slow enough that a
-; non-vectorized implementation actually ends up being faster.
+; The baseline x86-64 implementation of our core ChaCha function.
 
 xx__chacha_x64:
     test    rcx, rcx
     jz      .q
 
-    ; We'll need every register we can get our hands on, which of course means
-    ; an awful lot of up-front spilling.
+    ; Spill just about every register.
 
     push    rbx
     push    rbp
@@ -37,9 +31,7 @@ xx__chacha_x64:
     mov     [rsp + 48], rbp
     mov     [rsp + 56], r9
 
-    ; By a) copying the input state to the stack, and b) setting the block
-    ; counter at `[r8 + 48]` to its "final" value straight away, we can discard
-    ; the pointer in r8, which means one fewer register to spill.
+    ; Copy the input state, update its block counter.
 
     lea     r10, [rcx + 63]
     shr     r10, 6
@@ -65,13 +57,7 @@ xx__chacha_x64:
     mov     [rsp + 112], rsi
     mov     [rsp + 120], rdi
 
-    ; The working state consists of 16 32-bit integers, currently loaded as
-    ; pairs in 8 64-bit registers. Before we can begin mixing, these pairs need
-    ; to be separated.
-    ;
-    ; x86-64 gives us 16 general purpose registers, but we need rsp to keep us
-    ; tethered to the stack. As such we're left one register short, meaning we
-    ; don't have a register to receive the lower 32 bits of r12 (i.e. r12d).
+    ; Split 32-bit pairs into individual registers.
 
 .l:
     mov     [rsp], r9
@@ -94,8 +80,7 @@ xx__chacha_x64:
     shr     r14, 32
     shr     r15, 32
 
-    ; Now for the double-round loop. We can't avoid spilling inside the loop,
-    ; but we can get pretty close with a better quarter-round schedule.
+    ; Double-round loop.
 
 .d:
     sub     qword [rsp], 2
@@ -209,9 +194,7 @@ xx__chacha_x64:
 
     jmp     .d
 
-    ; Add the initial state back into the current working state. Also merge
-    ; 32-bit integer pairs into 64-bit values. This frees up 7 registers for us
-    ; to do more interesting things with.
+    ; Finish the batch and pair state fields again.
 
 .b:
     add     eax, [rsp + 64]
@@ -293,9 +276,7 @@ xx__chacha_x64:
 
     add     rdi, 64
 
-    ; If we're not done yet, prepare the next block. This involves spilling
-    ; the output arguments again, resetting the round counter, reloading the
-    ; input state, and finally incrementing the stack block counter.
+    ; Prepare for the next block.
 
     sub     rcx, 64
     jz      .r
@@ -320,8 +301,7 @@ xx__chacha_x64:
 
     jmp     .l
 
-    ; When rcx is not a multiple of 64 we are expected to copy the whole final
-    ; block to an (optional) address argument passed through rdx.
+    ; Deal with partial final blocks.
 
 .f:
     mov     rdx, [rsp + 40]
@@ -337,16 +317,7 @@ xx__chacha_x64:
     mov     [rdx + 48], r14
     mov     [rdx + 56], r15
 
-    ; The series of mov instructions below moves r8 to r9, r9 to 10, and so
-    ; on all the way to r15. This is nifty because jumping into the middle of
-    ; the "slide" is a cheap way of moving a particular register to r15.
-    ;
-    ; This is how we ensure that the final 0 to 7 bytes of output is always
-    ; held in r15, which saves a whole lot of branching and/or copying later.
-    ; The registers we overwrite along the way won't be used anyway.
-    ;
-    ; Note the manually assembled mov instructions with redundant rex.WRB
-    ; prefixes (0x4d) which make each instruction 4 bytes.
+    ; Move the final 0 to 7 keystream bytes to r15.
 
 .u:
     mov     rbx, rcx
@@ -369,15 +340,7 @@ xx__chacha_x64:
     test    rsi, rsi
     jnz     .x
 
-    ; This section is based on the one following the .x label (only without
-    ; the xor operations) so you might want to read that comment first.
-    ;
-    ; A subtle difference is that rbx is now a multiple of 4 rather than 8, as
-    ; the sequence after `jmp rax` contains half as many instructions. Rather
-    ; than doubling rbx explicitly we compensate by adjusting the later mov
-    ; addresses and halving additions to rbx.
-    ;
-    ; This optimization saves one whole instruction. (wow, so amazing!)
+    ; Write the final 1 to 63 bytes (mov).
 
 .m:
     mov     rbx, rcx
@@ -419,12 +382,7 @@ xx__chacha_x64:
     mov     [rdi + 2 * rbx], r15b
     jmp     .r
 
-    ; Output a subset of the final block. First as many whole quadwords as
-    ; possible, then the remaining 0 to 7 bytes (from r15).
-    ;
-    ; I have once again had to assemble some instructions manually because nasm
-    ; will optimize away + 0 address offsets, which would make the last two
-    ; instructions 3 rather than 4 bytes long.
+    ; Write the final 1 to 63 bytes (xor).
 
 .x:
     mov     rbx, rcx
@@ -476,7 +434,7 @@ xx__chacha_x64:
     xor     r15b, [rsi + rbx]
     mov     [rdi + rbx], r15b
 
-    ; Restore callee-saved registers and return.
+    ; Restore callee-saved registers.
 
 .r:
     mov     rsp, [rsp + 48]

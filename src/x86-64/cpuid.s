@@ -9,15 +9,14 @@
 
 
 ; This function collects processor feature information using the cpuid
-; instruction. The findings are condensed to a series of bit flags.
+; instruction. The findings are returned as a set of bitflags.
 
 xx__cpuid:
     xor     edi, edi
     xor     r8d, r8d
     mov     r9, rbx
 
-    ; Find the highest supported cpuid leaf id. Also, try to recognize the
-    ; vendor string.
+    ; Get the highest supported cpuid leaf, check the vendor string.
 
     xor     eax, eax
     cpuid
@@ -94,7 +93,7 @@ xx__cpuid:
     cmovc   edi, esi
 
     ; If the xgetbv instruction is available, load the XCR0 value's lower
-    ; 32 bits into r8d (overwriting its current zero value).
+    ; 32 bits into r8d (overwriting the previous value of zero).
 
     bt      ecx, 26     ; xsave
     jnc     .e
