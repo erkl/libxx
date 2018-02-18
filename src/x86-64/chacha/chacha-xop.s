@@ -32,26 +32,22 @@ xx__chacha_xop:
     ; One or more batches of 3 or 4 blocks each.
 
 .l:
-    vmovdqu     xmm3, [r8]
-    vpshufd     xmm0, xmm3, 0x00
-    vpshufd     xmm1, xmm3, 0x55
-    vpshufd     xmm2, xmm3, 0xaa
-    vpshufd     xmm3, xmm3, 0xff
-    vmovdqu     xmm7, [r8 + 16]
-    vpshufd     xmm4, xmm7, 0x00
-    vpshufd     xmm5, xmm7, 0x55
-    vpshufd     xmm6, xmm7, 0xaa
-    vpshufd     xmm7, xmm7, 0xff
-    vmovdqu     xmm11, [r8 + 32]
-    vpshufd     xmm8, xmm11, 0x00
-    vpshufd     xmm9, xmm11, 0x55
-    vpshufd     xmm10, xmm11, 0xaa
-    vpshufd     xmm11, xmm11, 0xff
-    vmovdqu     xmm15, [r8 + 48]
-    vpshufd     xmm12, xmm15, 0x00
-    vpshufd     xmm13, xmm15, 0x55
-    vpshufd     xmm14, xmm15, 0xaa
-    vpshufd     xmm15, xmm15, 0xff
+    vbroadcastss    xmm0, [r8]
+    vbroadcastss    xmm1, [r8 + 4]
+    vbroadcastss    xmm2, [r8 + 8]
+    vbroadcastss    xmm3, [r8 + 12]
+    vbroadcastss    xmm4, [r8 + 16]
+    vbroadcastss    xmm5, [r8 + 20]
+    vbroadcastss    xmm6, [r8 + 24]
+    vbroadcastss    xmm7, [r8 + 28]
+    vbroadcastss    xmm8, [r8 + 32]
+    vbroadcastss    xmm9, [r8 + 36]
+    vbroadcastss    xmm10, [r8 + 40]
+    vbroadcastss    xmm11, [r8 + 44]
+    vbroadcastss    xmm12, [r8 + 48]
+    vbroadcastss    xmm13, [r8 + 52]
+    vbroadcastss    xmm14, [r8 + 56]
+    vbroadcastss    xmm15, [r8 + 60]
 
     vmovdqa     [rsp + 32], xmm0
     vmovdqa     [rsp + 48], xmm1
@@ -125,101 +121,101 @@ xx__chacha_xop:
     jc      .lb
 
     vpaddd      xmm0, xmm0, xmm4
-    vpaddd      xmm1, xmm1, xmm5
     vpxor       xmm12, xmm12, xmm0
-    vpxor       xmm13, xmm13, xmm1
     vprotd      xmm12, xmm12, 16
+    vpaddd      xmm1, xmm1, xmm5
+    vpxor       xmm13, xmm13, xmm1
     vprotd      xmm13, xmm13, 16
     vpaddd      xmm2, xmm2, xmm6
-    vpaddd      xmm3, xmm3, xmm7
     vpxor       xmm14, xmm14, xmm2
-    vpxor       xmm15, xmm15, xmm3
     vprotd      xmm14, xmm14, 16
+    vpaddd      xmm3, xmm3, xmm7
+    vpxor       xmm15, xmm15, xmm3
     vprotd      xmm15, xmm15, 16
     vpaddd      xmm8, xmm8, xmm12
-    vpaddd      xmm9, xmm9, xmm13
     vpxor       xmm4, xmm4, xmm8
-    vpxor       xmm5, xmm5, xmm9
     vprotd      xmm4, xmm4, 12
+    vpaddd      xmm9, xmm9, xmm13
+    vpxor       xmm5, xmm5, xmm9
     vprotd      xmm5, xmm5, 12
     vpaddd      xmm10, xmm10, xmm14
-    vpaddd      xmm11, xmm11, xmm15
     vpxor       xmm6, xmm6, xmm10
-    vpxor       xmm7, xmm7, xmm11
     vprotd      xmm6, xmm6, 12
+    vpaddd      xmm11, xmm11, xmm15
+    vpxor       xmm7, xmm7, xmm11
     vprotd      xmm7, xmm7, 12
     vpaddd      xmm0, xmm0, xmm4
-    vpaddd      xmm1, xmm1, xmm5
     vpxor       xmm12, xmm12, xmm0
-    vpxor       xmm13, xmm13, xmm1
     vprotd      xmm12, xmm12, 8
+    vpaddd      xmm1, xmm1, xmm5
+    vpxor       xmm13, xmm13, xmm1
     vprotd      xmm13, xmm13, 8
     vpaddd      xmm2, xmm2, xmm6
-    vpaddd      xmm3, xmm3, xmm7
     vpxor       xmm14, xmm14, xmm2
-    vpxor       xmm15, xmm15, xmm3
     vprotd      xmm14, xmm14, 8
+    vpaddd      xmm3, xmm3, xmm7
+    vpxor       xmm15, xmm15, xmm3
     vprotd      xmm15, xmm15, 8
     vpaddd      xmm8, xmm8, xmm12
-    vpaddd      xmm9, xmm9, xmm13
     vpxor       xmm4, xmm4, xmm8
-    vpxor       xmm5, xmm5, xmm9
     vprotd      xmm4, xmm4, 7
+    vpaddd      xmm9, xmm9, xmm13
+    vpxor       xmm5, xmm5, xmm9
     vprotd      xmm5, xmm5, 7
     vpaddd      xmm10, xmm10, xmm14
-    vpaddd      xmm11, xmm11, xmm15
     vpxor       xmm6, xmm6, xmm10
-    vpxor       xmm7, xmm7, xmm11
     vprotd      xmm6, xmm6, 7
+    vpaddd      xmm11, xmm11, xmm15
+    vpxor       xmm7, xmm7, xmm11
     vprotd      xmm7, xmm7, 7
 
     vpaddd      xmm0, xmm0, xmm5
-    vpaddd      xmm3, xmm3, xmm4
     vpxor       xmm15, xmm15, xmm0
-    vpxor       xmm14, xmm14, xmm3
     vprotd      xmm15, xmm15, 16
+    vpaddd      xmm3, xmm3, xmm4
+    vpxor       xmm14, xmm14, xmm3
     vprotd      xmm14, xmm14, 16
     vpaddd      xmm1, xmm1, xmm6
-    vpaddd      xmm2, xmm2, xmm7
     vpxor       xmm12, xmm12, xmm1
-    vpxor       xmm13, xmm13, xmm2
     vprotd      xmm12, xmm12, 16
+    vpaddd      xmm2, xmm2, xmm7
+    vpxor       xmm13, xmm13, xmm2
     vprotd      xmm13, xmm13, 16
     vpaddd      xmm10, xmm10, xmm15
-    vpaddd      xmm9, xmm9, xmm14
     vpxor       xmm5, xmm5, xmm10
-    vpxor       xmm4, xmm4, xmm9
     vprotd      xmm5, xmm5, 12
+    vpaddd      xmm9, xmm9, xmm14
+    vpxor       xmm4, xmm4, xmm9
     vprotd      xmm4, xmm4, 12
     vpaddd      xmm11, xmm11, xmm12
-    vpaddd      xmm8, xmm8, xmm13
     vpxor       xmm6, xmm6, xmm11
-    vpxor       xmm7, xmm7, xmm8
     vprotd      xmm6, xmm6, 12
+    vpaddd      xmm8, xmm8, xmm13
+    vpxor       xmm7, xmm7, xmm8
     vprotd      xmm7, xmm7, 12
     vpaddd      xmm0, xmm0, xmm5
-    vpaddd      xmm3, xmm3, xmm4
     vpxor       xmm15, xmm15, xmm0
-    vpxor       xmm14, xmm14, xmm3
     vprotd      xmm15, xmm15, 8
+    vpaddd      xmm3, xmm3, xmm4
+    vpxor       xmm14, xmm14, xmm3
     vprotd      xmm14, xmm14, 8
     vpaddd      xmm1, xmm1, xmm6
-    vpaddd      xmm2, xmm2, xmm7
     vpxor       xmm12, xmm12, xmm1
-    vpxor       xmm13, xmm13, xmm2
     vprotd      xmm12, xmm12, 8
+    vpaddd      xmm2, xmm2, xmm7
+    vpxor       xmm13, xmm13, xmm2
     vprotd      xmm13, xmm13, 8
     vpaddd      xmm10, xmm10, xmm15
-    vpaddd      xmm9, xmm9, xmm14
     vpxor       xmm5, xmm5, xmm10
-    vpxor       xmm4, xmm4, xmm9
     vprotd      xmm5, xmm5, 7
+    vpaddd      xmm9, xmm9, xmm14
+    vpxor       xmm4, xmm4, xmm9
     vprotd      xmm4, xmm4, 7
     vpaddd      xmm11, xmm11, xmm12
-    vpaddd      xmm8, xmm8, xmm13
     vpxor       xmm6, xmm6, xmm11
-    vpxor       xmm7, xmm7, xmm8
     vprotd      xmm6, xmm6, 7
+    vpaddd      xmm8, xmm8, xmm13
+    vpxor       xmm7, xmm7, xmm8
     vprotd      xmm7, xmm7, 7
 
     jmp     .lr
@@ -378,39 +374,39 @@ xx__chacha_xop:
 
 .lx4:
     vpxor       xmm15, xmm15, [rsi + 240]
-    vpxor       xmm11, xmm11, [rsi + 224]
     vmovdqu     [rdi + 240], xmm15
+    vpxor       xmm11, xmm11, [rsi + 224]
     vmovdqu     [rdi + 224], xmm11
     vpxor       xmm7, xmm7, [rsi + 208]
-    vpxor       xmm3, xmm3, [rsi + 192]
     vmovdqu     [rdi + 208], xmm7
+    vpxor       xmm3, xmm3, [rsi + 192]
     vmovdqu     [rdi + 192], xmm3
 .lx3:
     vpxor       xmm13, xmm13, [rsi + 176]
-    vpxor       xmm9, xmm9, [rsi + 160]
     vmovdqu     [rdi + 176], xmm13
+    vpxor       xmm9, xmm9, [rsi + 160]
     vmovdqu     [rdi + 160], xmm9
     vpxor       xmm5, xmm5, [rsi + 144]
-    vpxor       xmm1, xmm1, [rsi + 128]
     vmovdqu     [rdi + 144], xmm5
+    vpxor       xmm1, xmm1, [rsi + 128]
     vmovdqu     [rdi + 128], xmm1
 .lx2:
     vpxor       xmm14, xmm14, [rsi + 112]
-    vpxor       xmm10, xmm10, [rsi + 96]
     vmovdqu     [rdi + 112], xmm14
+    vpxor       xmm10, xmm10, [rsi + 96]
     vmovdqu     [rdi + 96], xmm10
     vpxor       xmm6, xmm6, [rsi + 80]
-    vpxor       xmm2, xmm2, [rsi + 64]
     vmovdqu     [rdi + 80], xmm6
+    vpxor       xmm2, xmm2, [rsi + 64]
     vmovdqu     [rdi + 64], xmm2
 .lx1:
     vpxor       xmm12, xmm12, [rsi + 48]
-    vpxor       xmm8, xmm8, [rsi + 32]
     vmovdqu     [rdi + 48], xmm12
+    vpxor       xmm8, xmm8, [rsi + 32]
     vmovdqu     [rdi + 32], xmm8
     vpxor       xmm4, xmm4, [rsi + 16]
-    vpxor       xmm0, xmm0, [rsi]
     vmovdqu     [rdi + 16], xmm4
+    vpxor       xmm0, xmm0, [rsi]
     vmovdqu     [rdi], xmm0
 
     cmp     rbx, 4
@@ -649,21 +645,21 @@ xx__chacha_xop:
 
 .mx2:
     vpxor       xmm7, xmm7, [rsi + 112]
-    vpxor       xmm6, xmm6, [rsi + 96]
     vmovdqu     [rdi + 112], xmm7
+    vpxor       xmm6, xmm6, [rsi + 96]
     vmovdqu     [rdi + 96], xmm6
     vpxor       xmm5, xmm5, [rsi + 80]
-    vpxor       xmm4, xmm4, [rsi + 64]
     vmovdqu     [rdi + 80], xmm5
+    vpxor       xmm4, xmm4, [rsi + 64]
     vmovdqu     [rdi + 64], xmm4
 .mx1:
     vpxor       xmm3, xmm3, [rsi + 48]
-    vpxor       xmm2, xmm2, [rsi + 32]
     vmovdqu     [rdi + 48], xmm3
+    vpxor       xmm2, xmm2, [rsi + 32]
     vmovdqu     [rdi + 32], xmm2
     vpxor       xmm1, xmm1, [rsi + 16]
-    vpxor       xmm0, xmm0, [rsi]
     vmovdqu     [rdi + 16], xmm1
+    vpxor       xmm0, xmm0, [rsi]
     vmovdqu     [rdi], xmm0
 
     ; Deal with partial final blocks.
