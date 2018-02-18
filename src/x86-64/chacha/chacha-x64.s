@@ -89,107 +89,107 @@ xx__chacha_x64:
     add     r8d, r10d
     add     r9d, r11d
     xor     r14d, r8d
-    xor     r15d, r9d
     rol     r14d, 16
+    xor     r15d, r9d
     rol     r15d, 16
     add     r12d, r14d
     add     r13d, r15d
     xor     r10d, r12d
-    xor     r11d, r13d
     rol     r10d, 12
+    xor     r11d, r13d
     rol     r11d, 12
     add     r8d, r10d
     add     r9d, r11d
     xor     r14d, r8d
-    xor     r15d, r9d
     rol     r14d, 8
+    xor     r15d, r9d
     rol     r15d, 8
     add     r12d, r14d
     add     r13d, r15d
     xor     r10d, r12d
-    xor     r11d, r13d
     rol     r10d, 7
+    xor     r11d, r13d
     rol     r11d, 7
 
     mov     [rsp + 12], r12d
-    mov     r12d, [rsp + 8]
 
     add     eax, edx
     add     ecx, ebx
     xor     esi, eax
-    xor     edi, ecx
     rol     esi, 16
+    mov     r12d, [rsp + 8]
+    xor     edi, ecx
     rol     edi, 16
     add     r12d, esi
     add     ebp, edi
     xor     edx, r12d
-    xor     ebx, ebp
     rol     edx, 12
+    xor     ebx, ebp
     rol     ebx, 12
     add     eax, edx
     add     ecx, ebx
     xor     esi, eax
-    xor     edi, ecx
     rol     esi, 8
+    xor     edi, ecx
     rol     edi, 8
     add     r12d, esi
     add     ebp, edi
     xor     edx, r12d
-    xor     ebx, ebp
     rol     edx, 7
+    xor     ebx, ebp
     rol     ebx, 7
 
     add     eax, r10d
     add     ecx, r11d
     xor     r15d, eax
-    xor     r14d, ecx
     rol     r15d, 16
+    xor     r14d, ecx
     rol     r14d, 16
     add     ebp, r15d
     add     r12d, r14d
     xor     r10d, ebp
-    xor     r11d, r12d
     rol     r10d, 12
+    xor     r11d, r12d
     rol     r11d, 12
     add     eax, r10d
     add     ecx, r11d
     xor     r15d, eax
-    xor     r14d, ecx
     rol     r15d, 8
+    xor     r14d, ecx
     rol     r14d, 8
     add     ebp, r15d
     add     r12d, r14d
     xor     r10d, ebp
-    xor     r11d, r12d
     rol     r10d, 7
+    xor     r11d, r12d
     rol     r11d, 7
 
     mov     [rsp + 8], r12d
-    mov     r12d, [rsp + 12]
 
     add     r8d, ebx
     add     r9d, edx
     xor     esi, r8d
-    xor     edi, r9d
     rol     esi, 16
+    mov     r12d, [rsp + 12]
+    xor     edi, r9d
     rol     edi, 16
     add     r13d, esi
     add     r12d, edi
     xor     ebx, r13d
-    xor     edx, r12d
     rol     ebx, 12
+    xor     edx, r12d
     rol     edx, 12
     add     r8d, ebx
     add     r9d, edx
     xor     esi, r8d
-    xor     edi, r9d
     rol     esi, 8
+    xor     edi, r9d
     rol     edi, 8
     add     r13d, esi
     add     r12d, edi
     xor     ebx, r13d
-    xor     edx, r12d
     rol     ebx, 7
+    xor     edx, r12d
     rol     edx, 7
 
     jmp     .d
