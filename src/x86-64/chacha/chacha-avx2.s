@@ -143,8 +143,8 @@ xx__chacha_avx2:
     vpslld      ymm2, ymm5, 12
     vpsrld      ymm4, ymm4, 20
     vpsrld      ymm5, ymm5, 20
-    vpxor       ymm4, ymm4, ymm0
-    vpxor       ymm5, ymm5, ymm2
+    vpor        ymm4, ymm4, ymm0
+    vpor        ymm5, ymm5, ymm2
     vpaddd      ymm10, ymm10, ymm14
     vpaddd      ymm11, ymm11, ymm15
     vpxor       ymm6, ymm6, ymm10
@@ -153,8 +153,8 @@ xx__chacha_avx2:
     vpslld      ymm2, ymm7, 12
     vpsrld      ymm6, ymm6, 20
     vpsrld      ymm7, ymm7, 20
-    vpxor       ymm6, ymm6, ymm0
-    vpxor       ymm7, ymm7, ymm2
+    vpor        ymm6, ymm6, ymm0
+    vpor        ymm7, ymm7, ymm2
     vpaddd      ymm0, ymm4, [rsp]
     vpaddd      ymm1, ymm1, ymm5
     vpxor       ymm12, ymm12, ymm0
@@ -174,20 +174,20 @@ xx__chacha_avx2:
     vpxor       ymm5, ymm5, ymm9
     vpslld      ymm2, ymm4, 7
     vpsrld      ymm4, ymm4, 25
-    vpxor       ymm4, ymm4, ymm2
+    vpor        ymm4, ymm4, ymm2
     vpslld      ymm2, ymm5, 7
     vpsrld      ymm5, ymm5, 25
-    vpxor       ymm5, ymm5, ymm2
+    vpor        ymm5, ymm5, ymm2
     vpaddd      ymm10, ymm10, ymm14
     vpaddd      ymm11, ymm11, ymm15
     vpxor       ymm6, ymm6, ymm10
     vpxor       ymm7, ymm7, ymm11
     vpslld      ymm2, ymm6, 7
     vpsrld      ymm6, ymm6, 25
-    vpxor       ymm6, ymm6, ymm2
+    vpor        ymm6, ymm6, ymm2
     vpslld      ymm2, ymm7, 7
     vpsrld      ymm7, ymm7, 25
-    vpxor       ymm7, ymm7, ymm2
+    vpor        ymm7, ymm7, ymm2
 
     vpaddd      ymm0, ymm0, ymm5
     vpaddd      ymm3, ymm3, ymm4
@@ -211,8 +211,8 @@ xx__chacha_avx2:
     vpslld      ymm2, ymm4, 12
     vpsrld      ymm5, ymm5, 20
     vpsrld      ymm4, ymm4, 20
-    vpxor       ymm5, ymm5, ymm0
-    vpxor       ymm4, ymm4, ymm2
+    vpor        ymm5, ymm5, ymm0
+    vpor        ymm4, ymm4, ymm2
     vpaddd      ymm11, ymm11, ymm12
     vpaddd      ymm8, ymm8, ymm13
     vpxor       ymm6, ymm6, ymm11
@@ -221,8 +221,8 @@ xx__chacha_avx2:
     vpslld      ymm2, ymm7, 12
     vpsrld      ymm6, ymm6, 20
     vpsrld      ymm7, ymm7, 20
-    vpxor       ymm6, ymm6, ymm0
-    vpxor       ymm7, ymm7, ymm2
+    vpor        ymm6, ymm6, ymm0
+    vpor        ymm7, ymm7, ymm2
     vpaddd      ymm0, ymm5, [rsp]
     vpaddd      ymm3, ymm3, ymm4
     vpxor       ymm15, ymm15, ymm0
@@ -242,20 +242,20 @@ xx__chacha_avx2:
     vpxor       ymm4, ymm4, ymm9
     vpslld      ymm2, ymm5, 7
     vpsrld      ymm5, ymm5, 25
-    vpxor       ymm5, ymm5, ymm2
+    vpor        ymm5, ymm5, ymm2
     vpslld      ymm2, ymm4, 7
     vpsrld      ymm4, ymm4, 25
-    vpxor       ymm4, ymm4, ymm2
+    vpor        ymm4, ymm4, ymm2
     vpaddd      ymm11, ymm11, ymm12
     vpaddd      ymm8, ymm8, ymm13
     vpxor       ymm6, ymm6, ymm11
     vpxor       ymm7, ymm7, ymm8
     vpslld      ymm2, ymm6, 7
     vpsrld      ymm6, ymm6, 25
-    vpxor       ymm6, ymm6, ymm2
+    vpor        ymm6, ymm6, ymm2
     vpslld      ymm2, ymm7, 7
     vpsrld      ymm7, ymm7, 25
-    vpxor       ymm7, ymm7, ymm2
+    vpor        ymm7, ymm7, ymm2
     vmovdqa     ymm2, [rsp]
 
     jmp     .lr
@@ -562,7 +562,7 @@ xx__chacha_avx2:
     vpxor       ymm1, ymm1, ymm2
     vpslld      ymm8, ymm1, 12
     vpsrld      ymm1, ymm1, 20
-    vpxor       ymm1, ymm1, ymm8
+    vpor        ymm1, ymm1, ymm8
     vpaddd      ymm0, ymm0, ymm1
     vpxor       ymm3, ymm3, ymm0
     vpshufb     ymm3, ymm3, [rel rol8]
@@ -570,7 +570,7 @@ xx__chacha_avx2:
     vpxor       ymm1, ymm1, ymm2
     vpslld      ymm8, ymm1, 7
     vpsrld      ymm1, ymm1, 25
-    vpxor       ymm1, ymm1, ymm8
+    vpor        ymm1, ymm1, ymm8
     vpshufd     ymm0, ymm0, 0x93
     vpshufd     ymm2, ymm2, 0x39
     vpshufd     ymm3, ymm3, 0x4e
@@ -582,7 +582,7 @@ xx__chacha_avx2:
     vpxor       ymm1, ymm1, ymm2
     vpslld      ymm8, ymm1, 12
     vpsrld      ymm1, ymm1, 20
-    vpxor       ymm1, ymm1, ymm8
+    vpor        ymm1, ymm1, ymm8
     vpaddd      ymm0, ymm0, ymm1
     vpxor       ymm3, ymm3, ymm0
     vpshufb     ymm3, ymm3, [rel rol8]
@@ -590,7 +590,7 @@ xx__chacha_avx2:
     vpxor       ymm1, ymm1, ymm2
     vpslld      ymm8, ymm1, 7
     vpsrld      ymm1, ymm1, 25
-    vpxor       ymm1, ymm1, ymm8
+    vpor        ymm1, ymm1, ymm8
     vpshufd     ymm0, ymm0, 0x39
     vpshufd     ymm2, ymm2, 0x93
     vpshufd     ymm3, ymm3, 0x4e
@@ -672,8 +672,8 @@ xx__chacha_avx2:
     vpsrld      ymm1, ymm1, 20
     vpslld      ymm9, ymm5, 12
     vpsrld      ymm5, ymm5, 20
-    vpxor       ymm1, ymm1, ymm8
-    vpxor       ymm5, ymm5, ymm9
+    vpor        ymm1, ymm1, ymm8
+    vpor        ymm5, ymm5, ymm9
     vpaddd      ymm0, ymm0, ymm1
     vpaddd      ymm4, ymm4, ymm5
     vpxor       ymm3, ymm3, ymm0
@@ -694,8 +694,8 @@ xx__chacha_avx2:
     vpsrld      ymm5, ymm5, 25
     vpshufd     ymm3, ymm3, 0x4e
     vpshufd     ymm7, ymm7, 0x4e
-    vpxor       ymm1, ymm1, ymm8
-    vpxor       ymm5, ymm5, ymm9
+    vpor        ymm1, ymm1, ymm8
+    vpor        ymm5, ymm5, ymm9
 
     vpaddd      ymm0, ymm0, ymm1
     vpaddd      ymm4, ymm4, ymm5
@@ -711,8 +711,8 @@ xx__chacha_avx2:
     vpsrld      ymm1, ymm1, 20
     vpslld      ymm9, ymm5, 12
     vpsrld      ymm5, ymm5, 20
-    vpxor       ymm1, ymm1, ymm8
-    vpxor       ymm5, ymm5, ymm9
+    vpor        ymm1, ymm1, ymm8
+    vpor        ymm5, ymm5, ymm9
     vpaddd      ymm0, ymm0, ymm1
     vpaddd      ymm4, ymm4, ymm5
     vpxor       ymm3, ymm3, ymm0
@@ -733,8 +733,8 @@ xx__chacha_avx2:
     vpsrld      ymm5, ymm5, 25
     vpshufd     ymm3, ymm3, 0x4e
     vpshufd     ymm7, ymm7, 0x4e
-    vpxor       ymm1, ymm1, ymm8
-    vpxor       ymm5, ymm5, ymm9
+    vpor        ymm1, ymm1, ymm8
+    vpor        ymm5, ymm5, ymm9
 
     jmp     .mr
 

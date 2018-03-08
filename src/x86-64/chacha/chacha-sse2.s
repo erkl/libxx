@@ -156,8 +156,8 @@ xx__chacha_sse2:
     pslld       xmm5, 12
     psrld       xmm2, 20
     psrld       xmm3, 20
-    pxor        xmm4, xmm2
-    pxor        xmm5, xmm3
+    por         xmm4, xmm2
+    por         xmm5, xmm3
     paddd       xmm10, xmm14
     paddd       xmm11, xmm15
     pxor        xmm6, xmm10
@@ -168,8 +168,8 @@ xx__chacha_sse2:
     pslld       xmm7, 12
     psrld       xmm2, 20
     psrld       xmm3, 20
-    pxor        xmm6, xmm2
-    pxor        xmm7, xmm3
+    por         xmm6, xmm2
+    por         xmm7, xmm3
     paddd       xmm0, xmm4
     paddd       xmm1, xmm5
     pxor        xmm12, xmm0
@@ -180,8 +180,8 @@ xx__chacha_sse2:
     pslld       xmm13, 8
     psrld       xmm2, 24
     psrld       xmm3, 24
-    pxor        xmm12, xmm2
-    pxor        xmm13, xmm3
+    por         xmm12, xmm2
+    por         xmm13, xmm3
     movdqa      xmm2, [rsp]
     movdqa      xmm3, [rsp + 16]
     paddd       xmm2, xmm6
@@ -196,8 +196,8 @@ xx__chacha_sse2:
     pslld       xmm15, 8
     psrld       xmm1, 24
     psrld       xmm2, 24
-    pxor        xmm14, xmm1
-    pxor        xmm15, xmm2
+    por         xmm14, xmm1
+    por         xmm15, xmm2
     paddd       xmm8, xmm12
     paddd       xmm9, xmm13
     pxor        xmm4, xmm8
@@ -208,8 +208,8 @@ xx__chacha_sse2:
     pslld       xmm5, 7
     psrld       xmm1, 25
     psrld       xmm2, 25
-    pxor        xmm4, xmm1
-    pxor        xmm5, xmm2
+    por         xmm4, xmm1
+    por         xmm5, xmm2
     paddd       xmm10, xmm14
     paddd       xmm11, xmm15
     pxor        xmm6, xmm10
@@ -220,8 +220,8 @@ xx__chacha_sse2:
     pslld       xmm7, 7
     psrld       xmm1, 25
     psrld       xmm2, 25
-    pxor        xmm6, xmm1
-    pxor        xmm7, xmm2
+    por         xmm6, xmm1
+    por         xmm7, xmm2
     movdqa      xmm1, [rsp]
     movdqa      xmm2, [rsp + 16]
 
@@ -253,8 +253,8 @@ xx__chacha_sse2:
     pslld       xmm4, 12
     psrld       xmm1, 20
     psrld       xmm2, 20
-    pxor        xmm5, xmm1
-    pxor        xmm4, xmm2
+    por         xmm5, xmm1
+    por         xmm4, xmm2
     paddd       xmm11, xmm12
     paddd       xmm8, xmm13
     pxor        xmm6, xmm11
@@ -265,8 +265,8 @@ xx__chacha_sse2:
     pslld       xmm7, 12
     psrld       xmm1, 20
     psrld       xmm2, 20
-    pxor        xmm6, xmm1
-    pxor        xmm7, xmm2
+    por         xmm6, xmm1
+    por         xmm7, xmm2
     paddd       xmm0, xmm5
     paddd       xmm3, xmm4
     pxor        xmm15, xmm0
@@ -277,8 +277,8 @@ xx__chacha_sse2:
     pslld       xmm14, 8
     psrld       xmm1, 24
     psrld       xmm2, 24
-    pxor        xmm15, xmm1
-    pxor        xmm14, xmm2
+    por         xmm15, xmm1
+    por         xmm14, xmm2
     movdqa      xmm1, [rsp]
     movdqa      xmm2, [rsp + 16]
     paddd       xmm1, xmm6
@@ -293,8 +293,8 @@ xx__chacha_sse2:
     pslld       xmm13, 8
     psrld       xmm2, 24
     psrld       xmm3, 24
-    pxor        xmm12, xmm2
-    pxor        xmm13, xmm3
+    por         xmm12, xmm2
+    por         xmm13, xmm3
     paddd       xmm10, xmm15
     paddd       xmm9, xmm14
     pxor        xmm5, xmm10
@@ -305,8 +305,8 @@ xx__chacha_sse2:
     pslld       xmm4, 7
     psrld       xmm2, 25
     psrld       xmm3, 25
-    pxor        xmm5, xmm2
-    pxor        xmm4, xmm3
+    por         xmm5, xmm2
+    por         xmm4, xmm3
     paddd       xmm11, xmm12
     paddd       xmm8, xmm13
     pxor        xmm6, xmm11
@@ -317,8 +317,8 @@ xx__chacha_sse2:
     pslld       xmm7, 7
     psrld       xmm2, 25
     psrld       xmm3, 25
-    pxor        xmm6, xmm2
-    pxor        xmm7, xmm3
+    por         xmm6, xmm2
+    por         xmm7, xmm3
     movdqa      xmm2, [rsp]
     movdqa      xmm3, [rsp + 16]
 
@@ -596,19 +596,19 @@ xx__chacha_sse2:
     movdqa      xmm8, xmm1
     pslld       xmm8, 12
     psrld       xmm1, 20
-    pxor        xmm1, xmm8
+    por         xmm1, xmm8
     paddd       xmm0, xmm1
     pxor        xmm3, xmm0
     movdqa      xmm8, xmm3
     pslld       xmm3, 8
     psrld       xmm8, 24
-    pxor        xmm3, xmm8
+    por         xmm3, xmm8
     paddd       xmm2, xmm3
     pxor        xmm1, xmm2
     movdqa      xmm8, xmm1
     pslld       xmm8, 7
     psrld       xmm1, 25
-    pxor        xmm1, xmm8
+    por         xmm1, xmm8
     pshufd      xmm0, xmm0, 0x93
     pshufd      xmm2, xmm2, 0x39
     pshufd      xmm3, xmm3, 0x4e
@@ -622,19 +622,19 @@ xx__chacha_sse2:
     movdqa      xmm8, xmm1
     pslld       xmm8, 12
     psrld       xmm1, 20
-    pxor        xmm1, xmm8
+    por         xmm1, xmm8
     paddd       xmm0, xmm1
     pxor        xmm3, xmm0
     movdqa      xmm8, xmm3
     pslld       xmm3, 8
     psrld       xmm8, 24
-    pxor        xmm3, xmm8
+    por         xmm3, xmm8
     paddd       xmm2, xmm3
     pxor        xmm1, xmm2
     movdqa      xmm8, xmm1
     pslld       xmm8, 7
     psrld       xmm1, 25
-    pxor        xmm1, xmm8
+    por         xmm1, xmm8
     pshufd      xmm0, xmm0, 0x39
     pshufd      xmm2, xmm2, 0x93
     pshufd      xmm3, xmm3, 0x4e
@@ -705,8 +705,8 @@ xx__chacha_sse2:
     movdqa      xmm9, xmm5
     pslld       xmm9, 12
     psrld       xmm5, 20
-    pxor        xmm1, xmm8
-    pxor        xmm5, xmm9
+    por         xmm1, xmm8
+    por         xmm5, xmm9
     paddd       xmm0, xmm1
     paddd       xmm4, xmm5
     pxor        xmm3, xmm0
@@ -717,8 +717,8 @@ xx__chacha_sse2:
     movdqa      xmm9, xmm7
     pslld       xmm9, 8
     psrld       xmm7, 24
-    pxor        xmm3, xmm8
-    pxor        xmm7, xmm9
+    por         xmm3, xmm8
+    por         xmm7, xmm9
     paddd       xmm2, xmm3
     paddd       xmm6, xmm7
     pxor        xmm1, xmm2
@@ -735,8 +735,8 @@ xx__chacha_sse2:
     psrld       xmm5, 25
     pshufd      xmm3, xmm3, 0x4e
     pshufd      xmm7, xmm7, 0x4e
-    pxor        xmm1, xmm8
-    pxor        xmm5, xmm9
+    por         xmm1, xmm8
+    por         xmm5, xmm9
 
     paddd       xmm0, xmm1
     paddd       xmm4, xmm5
@@ -756,8 +756,8 @@ xx__chacha_sse2:
     movdqa      xmm9, xmm5
     pslld       xmm9, 12
     psrld       xmm5, 20
-    pxor        xmm1, xmm8
-    pxor        xmm5, xmm9
+    por         xmm1, xmm8
+    por         xmm5, xmm9
     paddd       xmm0, xmm1
     paddd       xmm4, xmm5
     pxor        xmm3, xmm0
@@ -768,8 +768,8 @@ xx__chacha_sse2:
     movdqa      xmm9, xmm7
     pslld       xmm9, 8
     psrld       xmm7, 24
-    pxor        xmm3, xmm8
-    pxor        xmm7, xmm9
+    por         xmm3, xmm8
+    por         xmm7, xmm9
     paddd       xmm2, xmm3
     paddd       xmm6, xmm7
     pxor        xmm1, xmm2
@@ -786,8 +786,8 @@ xx__chacha_sse2:
     psrld       xmm5, 25
     pshufd      xmm3, xmm3, 0x4e
     pshufd      xmm7, xmm7, 0x4e
-    pxor        xmm1, xmm8
-    pxor        xmm5, xmm9
+    por         xmm1, xmm8
+    por         xmm5, xmm9
 
     jmp     .mr
 
