@@ -35,6 +35,7 @@ endif
 
 TEST_OBJS := \
 	build/test/test-chacha20.o \
+	build/test/test-hchacha20.o \
 	build/test/main.o
 
 

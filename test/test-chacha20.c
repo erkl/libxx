@@ -21,10 +21,10 @@
  * states -- vastly more than I could ever be bothered to write by hand. */
 
 
-struct chacha20_test_vector {
+struct chacha20_tv {
     const uint8_t * input;
     uint64_t counter;
-    const char * output;
+    const char * stream;
 };
 
 
@@ -61,7 +61,7 @@ static const uint8_t noise[40] = {
 };
 
 
-static struct chacha20_test_vector tests[] = {
+static struct chacha20_tv tvs[] = {
     { zeros, 0x0000000000000000,
         "76b8e0ada0f13d90405d6ae55386bd28bdd219b8a08ded1aa836efcc8b770dc7"
         "da41597c5157488d7724e03fb8d84a376a43b8f41518a11cc387b669b2ee6586"
@@ -409,14 +409,14 @@ int xx__test_chacha20(void) {
     static uint8_t buf[4096];
     size_t len, i, j;
 
-    for (i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
-        len = strlen(tests[i].output) / 2;
+    for (i = 0; i < sizeof(tvs) / sizeof(tvs[0]); i++) {
+        len = strlen(tvs[i].stream) / 2;
 
         for (j = 0; j < sizeof(methods) / sizeof(methods[0]); j++) {
             memset(buf, 0, len);
-            methods[j](tests[i].input, tests[i].counter, buf, len);
+            methods[j](tvs[i].input, tvs[i].counter, buf, len);
 
-            if (hexcmp(buf, tests[i].output, len) != 0)
+            if (hexcmp(buf, tvs[i].stream, len) != 0)
                 return -1;
         }
     }
