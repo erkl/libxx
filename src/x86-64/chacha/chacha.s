@@ -19,15 +19,11 @@
 
 
 ; Initialize a context struct using the given 256-bit key and 64-bit IV.
-;
-;   rdi - struct xx_chacha20 *
-;   rsi - const uint8_t key[8]
-;   rdx - const uint8_t iv[8]
 
 xx_chacha20_init:
-    movdqu      xmm0, [rel sigma]
-    movdqu      xmm1, [rsi + 0]
-    movdqu      [rdi + 0], xmm0
+    movdqa      xmm0, [rel sigma]
+    movdqu      xmm1, [rsi]
+    movdqu      [rdi], xmm0
     movdqu      [rdi + 16], xmm1
 
     movdqu      xmm2, [rsi + 16]
@@ -42,10 +38,6 @@ xx_chacha20_init:
 
 ; Seek to a specific block counter + byte offset. This operation is lazy --
 ; we use a negative byte offset to signify the pending seek operation.
-;
-;   rdi - struct xx_chacha20 *
-;   rsi - uint64_t counter
-;   rdx - size_t offset
 
 xx_chacha20_seek:
     mov     rax, rdx
@@ -60,11 +52,6 @@ xx_chacha20_seek:
 
 
 ; Generate and output keystream data, optionally xor'd.
-;
-;   rdi - struct xx_chacha20 *
-;   rsi - uint8_t * dst
-;   rdx - const uint8_t * src
-;   rcx - size_t len
 
 xx_chacha20_xor:
     test    rcx, rcx
@@ -76,7 +63,7 @@ xx_chacha20_xor:
 
     ; Branch off if we haven't picked a core function yet.
 
-    mov     rax, [rel core]
+    mov     rax, [rel chacha]
     test    rax, rax
     jz      .s
 
@@ -285,7 +272,7 @@ xx_chacha20_xor:
     pop     rsi
     pop     rdi
 
-    mov     [rel core], rax
+    mov     [rel chacha], rax
     jmp     .i
 
 
@@ -295,8 +282,8 @@ xx_chacha20_xor:
 xx__select_chacha:
     call    xx__cpuid
 
-    ; AMD CPUs didn't get 128-bit wide SSE units until the K10 family (which
-    ; also introduced the SSE4a extension).
+    ; AMD CPUs didn't get 128-bit wide SSE units until the K10 family, which
+    ; introduced the SSE4a extension.
 
     test    eax, VENDOR_AMD
     jz      .d
@@ -322,7 +309,8 @@ xx__select_chacha:
     lea     rax, [rel xx__chacha_x64]
     ret
 
-    ; Intel  Core family (which also introduced the SSSE3 extension).
+    ; Intel SIMD didn't get fast enough until the Core family, which introduced
+    ; the SSSE3 extension.
 
 .d:
     test    eax, HAVE_AVX2
@@ -351,7 +339,7 @@ xx__select_chacha:
 
     section .data align=16
 
-core:
+chacha:
     dq  0
 
 
