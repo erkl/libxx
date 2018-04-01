@@ -27,6 +27,11 @@ ifeq ($(shell uname -m), x86_64)
 		build/src/x86-64/chacha/chacha-x64.o \
 		build/src/x86-64/chacha/chacha-xop.o \
 		build/src/x86-64/chacha/chacha.o \
+		build/src/x86-64/chacha/hchacha-sse2.o \
+		build/src/x86-64/chacha/hchacha-ssse3.o \
+		build/src/x86-64/chacha/hchacha-x64.o \
+		build/src/x86-64/chacha/hchacha-xop.o \
+		build/src/x86-64/chacha/hchacha.o \
 		build/src/x86-64/cpuid.o
 else
 	LIB_OBJS := \
